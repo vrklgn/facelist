@@ -39,7 +39,8 @@ var (
 
 type (
 	config struct {
-		EmailFilter   string `yaml:"emailFilter"`
+		EmailFilter1	string `yaml:"emailFilter1"`
+		EmailFilter2	string `yaml:"emailFilter2"`
 		SlackAPIToken string `yaml:"slackAPIToken"`
 		SlackTeam     string `yaml:"slackTeam"`
 	}
@@ -134,10 +135,10 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// Filter out deleted accounts, bots and users without @tink.se email addresses
+	// Filter out deleted accounts, bots and users without @tink.se/@tink.com email addresses
 	filteredUsers := []User{}
 	for _, user := range userlist.Members {
-		if !user.Deleted && !user.IsBot && strings.HasSuffix(user.Profile.Email, cfg.EmailFilter) {
+		if !user.Deleted && !user.IsBot && (strings.HasSuffix(user.Profile.Email, cfg.EmailFilter1) || strings.HasSuffix(user.Profile.Email, cfg.EmailFilter2) ) {
 			filteredUsers = append(filteredUsers, user)
 		}
 	}
