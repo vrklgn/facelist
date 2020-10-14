@@ -1,3 +1,5 @@
-emailFilter: "@tink.se"
+emailFilters:
+  - "@tink.se"
+  - "@tink.com"
 slackTeam: tink
 slackAPIToken: <SECRET_API_TOKEN_GOES_HERE>

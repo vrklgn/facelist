@@ -8,7 +8,7 @@ Configuration
 
 facelist is configured by a config file e.g facelist.yaml:
 
-    * emailFilter - Only users with a email ending with this string will be showed
+    * emailFilters - Only users with a email ending with one of these strings will be showed
     * slackTeam - The name of your slack team
     * slackAPIToken - Access token to the Slack api
 

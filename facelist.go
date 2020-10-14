@@ -39,9 +39,9 @@ var (
 
 type (
 	config struct {
-		EmailFilter   string `yaml:"emailFilter"`
-		SlackAPIToken string `yaml:"slackAPIToken"`
-		SlackTeam     string `yaml:"slackTeam"`
+		EmailFilters  []string `yaml:"emailFilters"`
+		SlackAPIToken string   `yaml:"slackAPIToken"`
+		SlackTeam     string   `yaml:"slackTeam"`
 	}
 
 	UserList struct {
@@ -134,10 +134,14 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// Filter out deleted accounts, bots and users without @tink.se email addresses
+	// Filter out deleted accounts, bots and users without @tink.se or @tink.com email addresses
 	filteredUsers := []User{}
 	for _, user := range userlist.Members {
-		if !user.Deleted && !user.IsBot && strings.HasSuffix(user.Profile.Email, cfg.EmailFilter) {
+		if user.Deleted || user.IsBot {
+			continue
+		}
+
+		if hasAllowedSuffix(user.Profile.Email) {
 			filteredUsers = append(filteredUsers, user)
 		}
 	}
@@ -152,6 +156,15 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 		log.Printf("Failed to execute index template: %v\n", err)
 		http.Error(w, "Oops. That's embarrassing. Please try again later.", http.StatusInternalServerError)
 	}
+}
+
+func hasAllowedSuffix(userEmail string) bool {
+	for _, emailFilter := range cfg.EmailFilters {
+		if strings.HasSuffix(userEmail, emailFilter) {
+			return true
+		}
+	}
+	return false
 }
 
 func main() {
